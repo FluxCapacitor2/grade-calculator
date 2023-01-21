@@ -4,7 +4,7 @@
       <button @click="load(idx)">{{ course.name }}</button>
       <button @click="courses.splice(idx, 1); selected = courses.length - 1;">-</button>
     </div>
-    <button @click="addNewCourse()">+</button>
+    <button @click="addNewCourse()" v-if="courses.length > 0">+</button>
   </div>
   <main v-if="courses[selected]">
     <h1>Grade Calculator: <input v-model="courses[selected].name"></h1>
@@ -244,7 +244,19 @@ export default {
     }
   },
   mounted() {
-    this.courses = JSON.parse(localStorage.getItem("grade_calculator_courses_json"));
+    const json = localStorage.getItem("grade_calculator_courses_json");
+    let parsed;
+    try {
+      parsed = JSON.parse(json);
+    } catch (ignored) { }
+
+    if (parsed === undefined || json === null) {
+      // The JSON is missing or invalid
+      this.courses = [];
+    } else {
+      // The JSON is valid
+      this.courses = JSON.parse(json);
+    }
   }
 }
 </script>
